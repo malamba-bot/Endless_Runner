@@ -15,6 +15,10 @@ class Play extends Phaser.Scene {
     }
 
     create() {
+        // Add left and right controls to the input manager
+        left = this.input.keyboard.addKey('A');
+        right = this.input.keyboard.addKey('D');
+
         // Physics group for obstacles
         this.obstacles = this.physics.add.group({
             immovable: true,
@@ -28,7 +32,7 @@ class Play extends Phaser.Scene {
         this.ball = this.physics.add.sprite(200, 100, 'old_ball');
         this.ball.setCircle(this.ball.width / 2);
         this.ball.setGravityY(200);
-        this.ball.body.setBounce(0.5);
+        this.ball.body.setBounce(0.8);
         this.ball.body.setMaxVelocityY(MAX_VELOCITY);
 
         // Add rectangle
@@ -42,8 +46,8 @@ class Play extends Phaser.Scene {
         ).setOrigin(0);
         this.obstacles.add(this.obstacle);
 
-        // Stick camera to ball
-        this.cameras.main.startFollow(this.ball);
+        // Stick camera to ball (only verically)
+        this.cameras.main.startFollow(this.ball, true, 0, 1);
 
         // Collider for ball and obstacles
         this.physics.add.collider(this.ball, this.obstacles);
@@ -52,6 +56,14 @@ class Play extends Phaser.Scene {
     update() {
         // Scroll the background according to how much the camera has moved since game start
         this.sky.tilePositionY = this.cameras.main.scrollY;
-    }
 
+        // Player movement
+        if (left.isDown) {
+            this.ball.setVelocityX(-MOVE_SPEED);
+        } else if (right.isDown) {
+            this.ball.setVelocityX(MOVE_SPEED);
+        } else {
+            this.ball.setVelocityX(0);
+        }
+    }
 }

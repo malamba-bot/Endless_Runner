@@ -18,4 +18,7 @@ let game = new Phaser.Game(config);
 
 let { height, width } = game.config;
 
+let left, right;
+
 let MAX_VELOCITY = 150;
+const MOVE_SPEED = 200;
