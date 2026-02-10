@@ -17,3 +17,5 @@ let config = {
 let game = new Phaser.Game(config);
 
 let { height, width } = game.config;
+
+let MAX_VELOCITY = 150;
