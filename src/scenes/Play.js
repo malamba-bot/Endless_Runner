@@ -19,6 +19,7 @@ class Play extends Phaser.Scene {
         this.ball.setGravityY(200);
         this.ball.body.setCollideWorldBounds(true);
         this.ball.body.setBounce(0.5);
+        this.ball.body.setMaxVelocityY(MAX_VELOCITY);
 
         // Add rectangle
         let size = Phaser.Math.Between(50, 100);
@@ -39,19 +40,6 @@ class Play extends Phaser.Scene {
     }
 
     update() {
-        if (this.ball.body.blocked) {
-            // Create a bounce effect by using a tween. Tweens change properties overtime.
-            this.tweens.add({
-                targets: this.ball,
-                scaleX: 1.3,    // Wider
-                scaleY: 0.7,    // Flatter
-                duration: 200,
-                yoyo: true,     // Automatically bounces back to original scale
-                ease: 'Quad.easeOut',
-
-            });
-
-        }
 
     }
 
