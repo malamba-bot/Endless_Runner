@@ -30,8 +30,12 @@ class Play extends Phaser.Scene {
         this.ball.setGravityY(200);
         this.ball.body.setBounce(BOUNCE_FACTOR);
         this.ball.body.setMaxVelocityY(max_velocity);
-        this.ball_radius = this.ball.width / 2;
-        this.ball.setCollideWorldBounds(true);
+
+        // Add side walls beyond camera so that the ball bounces of the sides
+        this.left_boundry = this.add.rectangle(0, 0, 10, height).setOrigin(1, 0.5);
+        this.right_boundry = this.add.rectangle(width, 0, 10, height).setOrigin(0, 0.5);
+        this.obstacles.add(this.left_boundry); 
+        this.obstacles.add(this.right_boundry); 
 
         // Add rectangle
         let size = Phaser.Math.Between(50, 100);
@@ -55,6 +59,9 @@ class Play extends Phaser.Scene {
     update() {
         // Scroll the background according to how much the camera has moved since game start
         this.sky.tilePositionY = this.cameras.main.scrollY;
+
+        // Move the side boundries with the ball
+        this.left_boundry.y = this.right_boundry.y = this.ball.y;
 
         // Burst movement: Set velocity high on tap, and quickly decay it
             if (Phaser.Input.Keyboard.JustDown(left)) {
