@@ -20,5 +20,8 @@ let { height, width } = game.config;
 
 let left, right;
 
-let MAX_VELOCITY = 150;
-const MOVE_SPEED = 200;
+let max_velocity = 150;
+const BOUNCE_FACTOR = 0.8;
+const MOVE_SPEED = 500;
+// How burst movement decays
+const DECAY = 0.92;
