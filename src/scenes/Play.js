@@ -78,19 +78,25 @@ class Play extends Phaser.Scene {
     /* Obstacle spawns are column-based to prevent overlap.
         */
     spawn_obstacles() {
-        // Fill cols with 0...14
         let cols = [];
         for (let i = 0; i < COLS; i++) {
             cols[i] = i;
         }
 
+        let rows = [];
+        for (let i = 0; i < ROWS; i++) {
+            rows[i] = i;
+        }
+
         Phaser.Utils.Array.Shuffle(cols);
+        Phaser.Utils.Array.Shuffle(rows);
 
         for (let i = 0; i < COLS; i++) {
             if (i <= COLS / 3) {
-                new Platform(this, cols[i] * OBSTACLE_SIZE, Phaser.Math.Between(300, height + 300)).setOrigin(0);
+
+                new Platform(this, cols[i] * OBSTACLE_SIZE, rows.pop() * OBSTACLE_SIZE).setOrigin(0);
             } else {
-                new Spikey_Ball(this, cols[i] * OBSTACLE_SIZE, Phaser.Math.Between(300, height + 300)).setOrigin(0);
+                new Spikey_Ball(this, cols[i] * OBSTACLE_SIZE, rows.pop() * OBSTACLE_SIZE).setOrigin(0);
             }
         }
 

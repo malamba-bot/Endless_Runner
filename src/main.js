@@ -27,5 +27,7 @@ const MOVE_SPEED = 500;
 // How fast burst movement decays
 const DECAY = 0.92;
 
+// Consts for col-row based spawning
 const OBSTACLE_SIZE = 32;
 const COLS = 15;
+const ROWS = 30;
