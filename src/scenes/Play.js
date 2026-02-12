@@ -7,6 +7,7 @@ class Play extends Phaser.Scene {
         this.load.image('old_ball', './assets/old_ball.png');
         this.load.image('sky', './assets/sky.png');
         this.load.image('spikey_ball', './assets/spikey_ball.png');
+        this.load.image('platform', './assets/platform.png');
     }
 
     create() {
@@ -14,14 +15,9 @@ class Play extends Phaser.Scene {
         left = this.input.keyboard.addKey('A');
         right = this.input.keyboard.addKey('D');
 
-        // Physics group for obstacles and spikes
-        this.obstacles = this.physics.add.group({
-            immovable: true,
-        });
-
-        this.spikeys = this.physics.add.group({
-            immovable: true,
-        });
+        // Physics group for obstacles
+        this.platforms = this.physics.add.group({ immovable: true });
+        this.spikeys = this.physics.add.group();
 
         // Add background tilesprite
         this.sky = this.add.tileSprite(0, 0, 480, 960, 'sky').setOrigin(0);
@@ -38,29 +34,17 @@ class Play extends Phaser.Scene {
         // Add side walls beyond camera so that the ball bounces of the sides
         this.left_boundry = this.add.rectangle(0, 0, 10, height).setOrigin(1, 0.5);
         this.right_boundry = this.add.rectangle(width, 0, 10, height).setOrigin(0, 0.5);
-        this.obstacles.add(this.left_boundry); 
-        this.obstacles.add(this.right_boundry); 
+        this.platforms.add(this.left_boundry); 
+        this.platforms.add(this.right_boundry); 
 
         this.spawn_obstacles();
-
-        // Add rectangle
-        let size = Phaser.Math.Between(50, 100);
-        this.obstacle = this.add.rectangle(
-            Phaser.Math.Between(0, width - 50),
-            height -200,
-            size,
-            100,
-            0xFF0000
-        ).setOrigin(0);
-        this.obstacles.add(this.obstacle);
-        this.obstacle.pushable = false;
 
         // Stick camera to ball (only verically)
         this.cameras.main.startFollow(this.ball, true, 0, 1);
         this.cameras.main.setScroll(0, this.cameras.main.scrollY);
 
         // Collider for ball, obstacles, and spikeys
-        this.physics.add.collider(this.ball, this.obstacles);
+        this.physics.add.collider(this.ball, this.platforms);
         this.physics.add.collider(this.ball, this.spikeys, () => {
             console.log("Game over!");
         });
@@ -103,7 +87,11 @@ class Play extends Phaser.Scene {
         Phaser.Utils.Array.Shuffle(cols);
 
         for (let i = 0; i < COLS; i++) {
-            new Spikey_Ball(this, cols[i] * OBSTACLE_SIZE, Phaser.Math.Between(300, height + 300)).setOrigin(0);
+            if (i <= COLS / 3) {
+                new Platform(this, cols[i] * OBSTACLE_SIZE, Phaser.Math.Between(300, height + 300)).setOrigin(0);
+            } else {
+                new Spikey_Ball(this, cols[i] * OBSTACLE_SIZE, Phaser.Math.Between(300, height + 300)).setOrigin(0);
+            }
         }
 
     }
