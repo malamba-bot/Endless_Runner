@@ -5,6 +5,9 @@ class Spikey_Ball extends Phaser.Physics.Arcade.Sprite {
         scene.add.existing(this);
         scene.physics.add.existing(this);
         scene.spikeys.add(this);
+        this.setCircle(this.width / 2);
+        this.setImmovable(true);
+        this.body.pushable = false;
     }
     
     preUpdate(time, delta) {
@@ -13,7 +16,7 @@ class Spikey_Ball extends Phaser.Physics.Arcade.Sprite {
         // If spikey scrolled off the top of the screen
         if (this.y < cam.scrollY - 100) {
             // Wrap to bottom of screen
-            this.y = cam.scrollY + height + 100;
+            this.y = cam.scrollY + height + Phaser.Math.Between(0, 150);
         }
 }
 }

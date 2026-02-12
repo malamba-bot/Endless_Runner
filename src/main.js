@@ -23,5 +23,9 @@ let left, right;
 let max_velocity = 150;
 const BOUNCE_FACTOR = 0.8;
 const MOVE_SPEED = 500;
-// How burst movement decays
+
+// How fast burst movement decays
 const DECAY = 0.92;
+
+const OBSTACLE_SIZE = 32;
+const COLS = 15;

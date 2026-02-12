@@ -10,7 +10,6 @@ class Play extends Phaser.Scene {
     }
 
     create() {
-        this.physics.world.setBounds(0, 0, width, height);
         // Add left and right controls to the input manager
         left = this.input.keyboard.addKey('A');
         right = this.input.keyboard.addKey('D');
@@ -42,6 +41,8 @@ class Play extends Phaser.Scene {
         this.obstacles.add(this.left_boundry); 
         this.obstacles.add(this.right_boundry); 
 
+        this.spawn_obstacles();
+
         // Add rectangle
         let size = Phaser.Math.Between(50, 100);
         this.obstacle = this.add.rectangle(
@@ -52,9 +53,7 @@ class Play extends Phaser.Scene {
             0xFF0000
         ).setOrigin(0);
         this.obstacles.add(this.obstacle);
-
-        // Add spikey
-        new Spikey_Ball(this, 100, 300);
+        this.obstacle.pushable = false;
 
         // Stick camera to ball (only verically)
         this.cameras.main.startFollow(this.ball, true, 0, 1);
@@ -75,11 +74,11 @@ class Play extends Phaser.Scene {
         this.left_boundry.y = this.right_boundry.y = this.ball.y;
 
         // Burst movement: Set velocity high on tap, and quickly decay it
-            if (Phaser.Input.Keyboard.JustDown(left)) {
-                this.ball.setVelocityX(-MOVE_SPEED);
-            } else if (Phaser.Input.Keyboard.JustDown(right)) {
-                this.ball.setVelocityX(MOVE_SPEED);
-            }
+        if (Phaser.Input.Keyboard.JustDown(left)) {
+            this.ball.setVelocityX(-MOVE_SPEED);
+        } else if (Phaser.Input.Keyboard.JustDown(right)) {
+            this.ball.setVelocityX(MOVE_SPEED);
+        }
 
         this.ball.body.velocity.x *= DECAY;
 
@@ -89,6 +88,23 @@ class Play extends Phaser.Scene {
 
 
         //
+
+    }
+
+    /* Obstacle spawns are column-based to prevent overlap.
+        */
+    spawn_obstacles() {
+        // Fill cols with 0...14
+        let cols = [];
+        for (let i = 0; i < COLS; i++) {
+            cols[i] = i;
+        }
+
+        Phaser.Utils.Array.Shuffle(cols);
+
+        for (let i = 0; i < COLS; i++) {
+            new Spikey_Ball(this, cols[i] * OBSTACLE_SIZE, Phaser.Math.Between(300, height + 300)).setOrigin(0);
+        }
 
     }
 }
