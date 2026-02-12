@@ -6,6 +6,7 @@ class Play extends Phaser.Scene {
     preload() {
         this.load.image('old_ball', './assets/old_ball.png');
         this.load.image('sky', './assets/sky.png');
+        this.load.image('spikey_ball', './assets/spikey_ball.png');
     }
 
     create() {
@@ -14,8 +15,12 @@ class Play extends Phaser.Scene {
         left = this.input.keyboard.addKey('A');
         right = this.input.keyboard.addKey('D');
 
-        // Physics group for obstacles
+        // Physics group for obstacles and spikes
         this.obstacles = this.physics.add.group({
+            immovable: true,
+        });
+
+        this.spikeys = this.physics.add.group({
             immovable: true,
         });
 
@@ -48,12 +53,18 @@ class Play extends Phaser.Scene {
         ).setOrigin(0);
         this.obstacles.add(this.obstacle);
 
+        // Add spikey
+        new Spikey_Ball(this, 100, 300);
+
         // Stick camera to ball (only verically)
         this.cameras.main.startFollow(this.ball, true, 0, 1);
         this.cameras.main.setScroll(0, this.cameras.main.scrollY);
 
-        // Collider for ball and obstacles
+        // Collider for ball, obstacles, and spikeys
         this.physics.add.collider(this.ball, this.obstacles);
+        this.physics.add.collider(this.ball, this.spikeys, () => {
+            console.log("Game over!");
+        });
     }
 
     update() {
@@ -75,6 +86,9 @@ class Play extends Phaser.Scene {
         if (Math.abs(this.ball.body.velocity.x) < 5) {
             this.ball.setVelocityX(0);
         }
+
+
+        //
 
     }
 }
