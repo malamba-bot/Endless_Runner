@@ -15,17 +15,25 @@ class Play extends Phaser.Scene {
         left = this.input.keyboard.addKey('A');
         right = this.input.keyboard.addKey('D');
 
+        // Score
+        this.score = 0;
+        this.score_text = this.add.text(0, 0, "0", {
+            fontSize: '48px', 
+            color: '#000000a',
+            padding: { left: 10}}).setDepth(1000).setOrigin(0);
+        // Stick the score text to the camera
+        this.score_text.setScrollFactor(0);
+
         // Physics group for obstacles
         this.platforms = this.physics.add.group({ immovable: true });
         this.spikeys = this.physics.add.group();
 
         // Add background tilesprite
         this.sky = this.add.tileSprite(0, 0, 480, 960, 'sky').setOrigin(0);
-        // Scroll factor is how much a game object is displaced when the camera moves
         this.sky.setScrollFactor(0);
 
         // Add ball sprite
-        this.ball = this.physics.add.sprite(200, 100, 'old_ball');
+        this.ball = this.physics.add.sprite(width / 2, BALL_START, 'old_ball');
         this.ball.setCircle(this.ball.width / 2);
         this.ball.setGravityY(200);
         this.ball.body.setBounce(BOUNCE_FACTOR);
@@ -56,6 +64,10 @@ class Play extends Phaser.Scene {
     }
 
     update() {
+        // Update text
+        this.score = (this.ball.y-BALL_START) / 100;
+        this.score_text.setText(Math.floor(this.score));
+
         // Scroll the background according to how much the camera has moved since game start
         this.sky.tilePositionY = this.cameras.main.scrollY;
 
