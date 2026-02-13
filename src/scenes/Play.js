@@ -36,8 +36,13 @@ class Play extends Phaser.Scene {
         this.right_boundry = this.add.rectangle(width, 0, 10, height).setOrigin(0, 0.5);
         this.platforms.add(this.left_boundry); 
         this.platforms.add(this.right_boundry); 
+        
+        // Array holding the active obstacle chunks
+        this.chunks = new Array();
+        // Spawn one chunk in current camera view (300px offset), and one below
+        this.chunks.push(this.spawn_chunk(300));
+        this.chunks.push(this.spawn_chunk(300 + height));
 
-        this.spawn_obstacles();
 
         // Stick camera to ball (only verically)
         this.cameras.main.startFollow(this.ball, true, 0, 1);
@@ -70,14 +75,44 @@ class Play extends Phaser.Scene {
             this.ball.setVelocityX(0);
         }
 
-
-        //
+        // CHUNKS ----------------------------------------------
+        // When the spawn threshold has been reached
+        if (this.cameras.main.scrollY > this.next_spawn_threshhold) {
+            // Spawn a new chunk past the bottom of the screen and add it to
+            // the chunks array
+            this.chunks.push(this.spawn_chunk(this.cameras.main.scrollY + height));
+            // Delete the chunk which has scrolled past and remove it from
+            // the chunks array
+            let old_chunk = this.chunks.shift();
+            old_chunk.forEach((obs) => { obs.destroy(); }); 
+        }
 
     }
 
-    /* Obstacle spawns are column-based to prevent overlap.
+    /* Obstacles are spawned in chunks using rows and columns to prevent
+        * overlap.
+        * 
+        * A random permutation of 0 -> COLS - 1 and ROWS - 1 are generated
+        * by shuffling arrays. 
+        *
+        * A col and row number are taken from the ends of the arrays
+        * to create each obstacle, placing it at a random and unique
+        * location.
+        *
+        * offset is added to all rows, in case it needs to be spawned below
+        * another chunk.
+        *
+        * next_spawn_threshold - the y coordinate which will
+        * trigger the spawn of a new chunk upon crossing the top of the
+        * screen is set to the offset (meaning a new chunk will spawn once
+        * the beginning of this chunk is at the top of the screen.
+        * 
+        * All obstacles in this chunk are returned in an array, so they can
+        * grouped together in the chunks array and deleted together later 
         */
-    spawn_obstacles() {
+
+    spawn_chunk(offset) {
+        let chunk = new Array();
         let cols = [];
         for (let i = 0; i < COLS; i++) {
             cols[i] = i;
@@ -92,13 +127,22 @@ class Play extends Phaser.Scene {
         Phaser.Utils.Array.Shuffle(rows);
 
         for (let i = 0; i < COLS; i++) {
-            if (i <= COLS / 3) {
+            let cur_col =  cols[i] * OBSTACLE_SIZE;
+            let cur_row = offset + rows.pop() * OBSTACLE_SIZE;
 
-                new Platform(this, cols[i] * OBSTACLE_SIZE, rows.pop() * OBSTACLE_SIZE).setOrigin(0);
+            if (i <= COLS / 3) {
+                // Make some platforms
+                chunk[i] = new Platform(this, cur_col, cur_row).setOrigin(0);
             } else {
-                new Spikey_Ball(this, cols[i] * OBSTACLE_SIZE, rows.pop() * OBSTACLE_SIZE).setOrigin(0);
+                // Make spikey balls
+                chunk[i] = new Spikey_Ball(this, cur_col, cur_row).setOrigin(0);
             }
         }
+        // Set the next spawn threshold to the bottom of the screen
+        this.next_spawn_threshhold = offset;
 
+        return chunk;
     }
 }
+
+
