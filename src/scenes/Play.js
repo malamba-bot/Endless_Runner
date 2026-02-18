@@ -4,7 +4,7 @@ class Play extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('old_ball', './assets/old_ball.png');
+        this.load.image('hook', './assets/hook1.png');
         this.load.image('sky', './assets/sky.png');
         this.load.image('spikey_ball', './assets/spikey_ball.png');
         this.load.image('platform', './assets/platform.png');
@@ -24,6 +24,9 @@ class Play extends Phaser.Scene {
         // Stick the score text to the camera
         this.score_text.setScrollFactor(0);
 
+        // When the next speed increase will occur
+        this.next_speed_increase = max_velocity / 4;
+
         // Physics group for obstacles
         this.platforms = this.physics.add.group({ immovable: true });
         this.spikeys = this.physics.add.group();
@@ -33,11 +36,11 @@ class Play extends Phaser.Scene {
         this.sky.setScrollFactor(0);
 
         // Add ball sprite
-        this.ball = this.physics.add.sprite(width / 2, BALL_START, 'old_ball');
-        this.ball.setCircle(this.ball.width / 2);
-        this.ball.setGravityY(200);
-        this.ball.body.setBounce(BOUNCE_FACTOR);
-        this.ball.body.setMaxVelocityY(max_velocity);
+        this.hook = this.physics.add.sprite(width / 2, BALL_START_Y, 'hook');
+        this.hook.setCircle(this.hook.width / 2, 0, 25);
+        this.hook.setGravityY(200);
+        this.hook.body.setBounce(BOUNCE_FACTOR);
+        this.hook.body.setMaxVelocityY(max_velocity);
 
         // Add side walls beyond camera so that the ball bounces of the sides
         this.left_boundry = this.add.rectangle(0, 0, 10, height).setOrigin(1, 0.5);
@@ -53,38 +56,45 @@ class Play extends Phaser.Scene {
 
 
         // Stick camera to ball (only verically)
-        this.cameras.main.startFollow(this.ball, true, 0, 1);
+        this.cameras.main.startFollow(this.hook, true, 0, 1);
         this.cameras.main.setScroll(0, this.cameras.main.scrollY);
 
         // Collider for ball, obstacles, and spikeys
-        this.physics.add.collider(this.ball, this.platforms);
-        this.physics.add.collider(this.ball, this.spikeys, () => {
+        this.physics.add.collider(this.hook, this.platforms);
+        this.physics.add.collider(this.hook, this.spikeys, () => {
             console.log("Game over!");
         });
     }
 
     update() {
         // Update text
-        this.score = (this.ball.y-BALL_START) / 100;
+        this.score = (this.hook.y - BALL_START_Y) / 100;
         this.score_text.setText(Math.floor(this.score));
+
+        // Check if speed needs to be increased
+        if (this.score > this.next_speed_increase) {
+            max_velocity *= VELOCITY_MULTIPLIER;
+            this.hook.body.setMaxVelocityY(max_velocity);
+            this.next_speed_increase += max_velocity / 4; 
+        }
 
         // Scroll the background according to how much the camera has moved since game start
         this.sky.tilePositionY = this.cameras.main.scrollY;
 
         // Move the side boundries with the ball
-        this.left_boundry.y = this.right_boundry.y = this.ball.y;
+        this.left_boundry.y = this.right_boundry.y = this.hook.y;
 
         // Burst movement: Set velocity high on tap, and quickly decay it
         if (Phaser.Input.Keyboard.JustDown(left)) {
-            this.ball.setVelocityX(-MOVE_SPEED);
+            this.hook.setVelocityX(-MOVE_SPEED);
         } else if (Phaser.Input.Keyboard.JustDown(right)) {
-            this.ball.setVelocityX(MOVE_SPEED);
+            this.hook.setVelocityX(MOVE_SPEED);
         }
 
-        this.ball.body.velocity.x *= DECAY;
+        this.hook.body.velocity.x *= DECAY;
 
-        if (Math.abs(this.ball.body.velocity.x) < 5) {
-            this.ball.setVelocityX(0);
+        if (Math.abs(this.hook.body.velocity.x) < 5) {
+            this.hook.setVelocityX(0);
         }
 
         // CHUNKS ----------------------------------------------

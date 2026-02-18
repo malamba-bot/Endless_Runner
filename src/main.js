@@ -19,11 +19,12 @@ let game = new Phaser.Game(config);
 let { height, width } = game.config;
 
 let left, right;
-let max_velocity = 150;
+let max_velocity = 250;
 
+const VELOCITY_MULTIPLIER = 1.25;
 const BOUNCE_FACTOR = 0.8;
 const MOVE_SPEED = 500;
-const BALL_START = 100;
+const BALL_START_Y = 100;
 
 // How fast burst movement decays
 const DECAY = 0.92;
