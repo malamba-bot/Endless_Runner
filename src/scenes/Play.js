@@ -66,7 +66,7 @@ class Play extends Phaser.Scene {
         });
     }
 
-    update() {
+    update(time, delta) {
         // Update text
         this.score = (this.hook.y - BALL_START_Y) / 100;
         this.score_text.setText(Math.floor(this.score));
@@ -90,9 +90,7 @@ class Play extends Phaser.Scene {
         } else if (Phaser.Input.Keyboard.JustDown(right)) {
             this.hook.setVelocityX(MOVE_SPEED);
         }
-
-        this.hook.body.velocity.x *= DECAY;
-
+        this.hook.body.velocity.x *= Math.pow(DECAY, delta / 12);
         if (Math.abs(this.hook.body.velocity.x) < 5) {
             this.hook.setVelocityX(0);
         }
