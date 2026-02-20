@@ -4,10 +4,17 @@ class Play extends Phaser.Scene {
     }
 
     preload() {
+        // AUDIO
+        this.load.audio('pop_sfx_1', './assets/sfx/pop_sfx_1.mp3')
+        this.load.audio('pop_sfx_2', './assets/sfx/pop_sfx_2.mp3')
+        
+        // IMAGES
         this.load.image('hook', './assets/hook1.png');
         this.load.image('sky', './assets/sky.png');
         this.load.image('spikey_ball', './assets/spikey_ball.png');
         this.load.image('bubble', './assets/bubble.png');
+        
+        // SPRITE SHEETS
         this.load.spritesheet("bubble_pop", "./assets/bubble_pop_scaled.png", {
             frameWidth: 48,
             frameHeight: 48,
@@ -17,15 +24,24 @@ class Play extends Phaser.Scene {
     }
 
     create() {
+        // INPUT --------------------------------------------------
+
         // Add left and right controls to the input manager
         left = this.input.keyboard.addKey('A');
         right = this.input.keyboard.addKey('D');
+
+        // ANIMATIONS AND SOUNDS ----------------------------------
 
         this.anims.create({
             key: "pop",
             frames: this.anims.generateFrameNumbers("bubble_pop", { start: 1, end: 3, first: 1 }),
             frameRate: 12,
         })
+
+        // Add popping sounds to an array so we can randomly select one later
+        this.pop_sounds = [this.sound.add('pop_sfx_1'), this.sound.add('pop_sfx_2')];
+        
+        // TEXT -----------------------------------------------------
 
         // Score
         this.score = 0;
@@ -36,10 +52,11 @@ class Play extends Phaser.Scene {
         // Stick the score text to the camera
         this.score_text.setScrollFactor(0);
 
+        // PHYSICS --------------------------------------------------
         // When the next speed increase will occur
         this.next_speed_increase = max_velocity / 4;
 
-        // Physics group for obstacles
+        // Add physics groups for obstacles
         this.platforms = this.physics.add.group({ immovable: true });
         this.bubbles = this.physics.add.group({ immovable: true });
         this.spikeys = this.physics.add.group();
@@ -48,7 +65,7 @@ class Play extends Phaser.Scene {
         this.sky = this.add.tileSprite(0, 0, 480, 960, 'sky').setOrigin(0);
         this.sky.setScrollFactor(0);
 
-        // Add ball sprite
+        // Add hook sprite
         this.hook = this.physics.add.sprite(width / 2, BALL_START_Y, 'hook');
         this.hook.setCircle(this.hook.width / 2, 0, 25);
         this.hook.setGravityY(200);
@@ -72,7 +89,7 @@ class Play extends Phaser.Scene {
         this.cameras.main.startFollow(this.hook, true, 0, 1);
         this.cameras.main.setScroll(0, this.cameras.main.scrollY);
 
-        // Collider for ball, obstacles, and spikeys
+        // Collider checking against the hook, invisible side platforms, bubbles, and fish
         this.physics.add.collider(this.hook, this.platforms);
         this.physics.add.collider(this.hook, this.bubbles, (hook, bubble) => {
             // Add a temp sprite to play animation while getting rid of physics body
@@ -80,6 +97,8 @@ class Play extends Phaser.Scene {
             const y = bubble.y;
 
             bubble.destroy();
+            Phaser.Math.RND.pick(this.pop_sounds).play();
+            
             
             const temp_bubble = this.add.sprite(x, y, 'bubble').setOrigin(0);
             temp_bubble.play('pop');
