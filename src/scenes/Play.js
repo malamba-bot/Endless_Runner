@@ -10,7 +10,7 @@ class Play extends Phaser.Scene {
         
         // IMAGES
         this.load.image('hook', './assets/hook1.png');
-        this.load.image('sky', './assets/sky.png');
+        this.load.image('water', './assets/water.png');
         this.load.image('spikey_ball', './assets/spikey_ball.png');
         this.load.image('bubble', './assets/bubble.png');
         
@@ -21,9 +21,18 @@ class Play extends Phaser.Scene {
             startFrame: 0,
             endFrame: 3,
         })
+
     }
 
     create() {
+        // PIPELINE -----------------------------------------------
+        // Add the water warping pipeline to the pipeline manager
+        const pipelineManager = this.sys.renderer.pipelines;
+        this.water_pipeline = pipelineManager.add('water_prefx', new Water_Pipeline(this.sys.game, this));
+        this.water = this.add.image(0, 0, 'water').setOrigin(0).setDisplaySize(width, height).setPipeline('water_prefx');
+        this.water.setScrollFactor(0);
+        this.water_pipeline.set1f('y_resolution', height);
+
         // INPUT --------------------------------------------------
 
         // Add left and right controls to the input manager
@@ -39,7 +48,7 @@ class Play extends Phaser.Scene {
         })
 
         // Add popping sounds to an array so we can randomly select one later
-        this.pop_sounds = [this.sound.add('pop_sfx_1'), this.sound.add('pop_sfx_2')];
+        this.pop_sounds = ['pop_sfx_1', 'pop_sfx_2'];
         
         // TEXT -----------------------------------------------------
 
@@ -53,6 +62,7 @@ class Play extends Phaser.Scene {
         this.score_text.setScrollFactor(0);
 
         // PHYSICS --------------------------------------------------
+        
         // When the next speed increase will occur
         this.next_speed_increase = max_velocity / 4;
 
@@ -61,9 +71,6 @@ class Play extends Phaser.Scene {
         this.bubbles = this.physics.add.group({ immovable: true });
         this.spikeys = this.physics.add.group();
 
-        // Add background tilesprite
-        this.sky = this.add.tileSprite(0, 0, 480, 960, 'sky').setOrigin(0);
-        this.sky.setScrollFactor(0);
 
         // Add hook sprite
         this.hook = this.physics.add.sprite(width / 2, BALL_START_Y, 'hook');
@@ -71,10 +78,11 @@ class Play extends Phaser.Scene {
         this.hook.setGravityY(200);
         this.hook.body.setBounce(BOUNCE_FACTOR);
         this.hook.body.setMaxVelocityY(max_velocity);
+        this.hook.body.setMaxVelocityX(HARD_MAX_VELOCITY); // avoid phasing!
 
         // Add side walls beyond camera so that the ball bounces of the sides
-        this.left_boundry = this.add.rectangle(0, 0, 10, height).setOrigin(1, 0.5);
-        this.right_boundry = this.add.rectangle(width, 0, 10, height).setOrigin(0, 0.5);
+        this.left_boundry = this.add.rectangle(0, 0, 10, height + 100).setOrigin(1, 0.5);
+        this.right_boundry = this.add.rectangle(width, 0, 10, height + 100).setOrigin(0, 0.5);
         this.platforms.add(this.left_boundry); 
         this.platforms.add(this.right_boundry); 
         
@@ -97,8 +105,7 @@ class Play extends Phaser.Scene {
             const y = bubble.y;
 
             bubble.destroy();
-            Phaser.Math.RND.pick(this.pop_sounds).play();
-            
+            this.sound.play(Phaser.Math.RND.pick(this.pop_sounds));
             
             const temp_bubble = this.add.sprite(x, y, 'bubble').setOrigin(0);
             temp_bubble.play('pop');
@@ -107,6 +114,7 @@ class Play extends Phaser.Scene {
         this.physics.add.collider(this.hook, this.spikeys, () => {
             console.log("Game over!");
         });
+
     }
 
     update(time, delta) {
@@ -114,15 +122,13 @@ class Play extends Phaser.Scene {
         this.score = (this.hook.y - BALL_START_Y) / 100;
         this.score_text.setText(Math.floor(this.score));
 
+
         // Check if speed needs to be increased
-        if (this.score > this.next_speed_increase) {
+        if (max_velocity < HARD_MAX_VELOCITY && this.score > this.next_speed_increase) {
             max_velocity *= VELOCITY_MULTIPLIER;
             this.hook.body.setMaxVelocityY(max_velocity);
             this.next_speed_increase += max_velocity / 4; 
         }
-
-        // Scroll the background according to how much the camera has moved since game start
-        this.sky.tilePositionY = this.cameras.main.scrollY;
 
         // Move the side boundries with the ball
         this.left_boundry.y = this.right_boundry.y = this.hook.y;

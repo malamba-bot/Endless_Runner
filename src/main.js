@@ -1,17 +1,18 @@
 let config = {
-    type: Phaser.AUTO,
+    type: Phaser.WEBGL,
     width: 480,
     height: 960,
     physics: { 
         default: 'arcade',
         arcade: {
-            debug: true,
+            debug: false,
         }
     },
     scale: {
         autoCenter: Phaser.Scale.CENTER_HORIZONTALLY,
     },
-    scene: [Play]
+    scene: [Play],
+    //pipeline: { 'water_prefx': Water_Pipeline },
 }
 
 let game = new Phaser.Game(config);
@@ -25,6 +26,7 @@ const VELOCITY_MULTIPLIER = 1.25;
 const BOUNCE_FACTOR = 0.8;
 const MOVE_SPEED = 500;
 const BALL_START_Y = 100;
+const HARD_MAX_VELOCITY = 640;
 
 // How fast burst movement decays
 const DECAY = 0.92;
