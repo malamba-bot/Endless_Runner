@@ -7,13 +7,25 @@ class Play extends Phaser.Scene {
         this.load.image('hook', './assets/hook1.png');
         this.load.image('sky', './assets/sky.png');
         this.load.image('spikey_ball', './assets/spikey_ball.png');
-        this.load.image('platform', './assets/platform.png');
+        this.load.image('bubble', './assets/bubble.png');
+        this.load.spritesheet("bubble_pop", "./assets/bubble_pop_scaled.png", {
+            frameWidth: 48,
+            frameHeight: 48,
+            startFrame: 0,
+            endFrame: 3,
+        })
     }
 
     create() {
         // Add left and right controls to the input manager
         left = this.input.keyboard.addKey('A');
         right = this.input.keyboard.addKey('D');
+
+        this.anims.create({
+            key: "pop",
+            frames: this.anims.generateFrameNumbers("bubble_pop", { start: 1, end: 3, first: 1 }),
+            frameRate: 12,
+        })
 
         // Score
         this.score = 0;
@@ -29,6 +41,7 @@ class Play extends Phaser.Scene {
 
         // Physics group for obstacles
         this.platforms = this.physics.add.group({ immovable: true });
+        this.bubbles = this.physics.add.group({ immovable: true });
         this.spikeys = this.physics.add.group();
 
         // Add background tilesprite
@@ -61,6 +74,17 @@ class Play extends Phaser.Scene {
 
         // Collider for ball, obstacles, and spikeys
         this.physics.add.collider(this.hook, this.platforms);
+        this.physics.add.collider(this.hook, this.bubbles, (hook, bubble) => {
+            // Add a temp sprite to play animation while getting rid of physics body
+            const x = bubble.x; 
+            const y = bubble.y;
+
+            bubble.destroy();
+            
+            const temp_bubble = this.add.sprite(x, y, 'bubble').setOrigin(0);
+            temp_bubble.play('pop');
+            temp_bubble.once('animationcomplete', () => { temp_bubble.destroy(); });
+        });
         this.physics.add.collider(this.hook, this.spikeys, () => {
             console.log("Game over!");
         });
@@ -90,7 +114,13 @@ class Play extends Phaser.Scene {
         } else if (Phaser.Input.Keyboard.JustDown(right)) {
             this.hook.setVelocityX(MOVE_SPEED);
         }
+
+        /* Velocity is multiplied by DECAY ^ delta / C where C is any constant. This helps the decay rate stay
+            * consistent across different framerates while ensuring that the whole expression is never
+            * greater than 1. 
+            */
         this.hook.body.velocity.x *= Math.pow(DECAY, delta / 12);
+
         if (Math.abs(this.hook.body.velocity.x) < 5) {
             this.hook.setVelocityX(0);
         }
@@ -152,7 +182,7 @@ class Play extends Phaser.Scene {
 
             if (i <= COLS / 3) {
                 // Make some platforms
-                chunk[i] = new Platform(this, cur_col, cur_row).setOrigin(0);
+                chunk[i] = new Bubble(this, cur_col, cur_row).setOrigin(0);
             } else {
                 // Make spikey balls
                 chunk[i] = new Spikey_Ball(this, cur_col, cur_row).setOrigin(0);

@@ -30,6 +30,6 @@ const BALL_START_Y = 100;
 const DECAY = 0.92;
 
 // Consts for col-row based spawning
-const OBSTACLE_SIZE = 32;
-const COLS = 15;
-const ROWS = 30;
+const OBSTACLE_SIZE = 48;
+const COLS = Math.round(width / OBSTACLE_SIZE);
+const ROWS = Math.round(height / OBSTACLE_SIZE);
