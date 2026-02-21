@@ -218,11 +218,11 @@ class Play extends Phaser.Scene {
             let cur_col =  cols[i] * OBSTACLE_SIZE;
             let cur_row = offset + rows.pop() * OBSTACLE_SIZE;
 
-            if (i <= COLS / 3) {
-                // Make some platforms
+            if (i < COLS * 0.7) {
+                // Make some bubbles
                 chunk[i] = new Bubble(this, cur_col, cur_row).setOrigin(0);
             } else {
-                // Make spikey balls
+                // Make fish
                 chunk[i] = new Fish(this, cur_col, cur_row).setOrigin(0);
             }
         }

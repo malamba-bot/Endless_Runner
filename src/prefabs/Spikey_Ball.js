@@ -22,10 +22,14 @@ class Fish extends Phaser.Physics.Arcade.Sprite {
     }
 
     blink() {
+        // Don't play if this object is destroyed
+        if (!this.active) return;
+
         this.play('blink');
         this.once('animationcomplete', () => {
             this.setFrame(0);
             this.create_timer();
         });
     }
+
 } 
