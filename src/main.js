@@ -18,7 +18,7 @@ let game = new Phaser.Game(config);
 
 let { height, width } = game.config;
 
-let left, right;
+let left, right, space;
 let max_velocity = 250;
 
 const VELOCITY_MULTIPLIER = 1.25;
