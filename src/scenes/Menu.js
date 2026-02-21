@@ -53,6 +53,7 @@ class Menu extends Phaser.Scene {
 
         // INPUT --------------------------------------------------
         space = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+        c_key = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.C);
 
 
         // BACKGROUND
@@ -67,11 +68,18 @@ class Menu extends Phaser.Scene {
         this.water_pipeline.set1f('scrollY', 0);
 
         // TEXT ---------------------------------------------------
+        this.add.bitmapText(width / 2, height * 0.05, 'blue_winter_font', `Deepest catch: ${Math.ceil(high_score)}m`, 24).setOrigin(0.5);
+
         this.add.bitmapText(width / 2, height * 0.2, 'bubble_font', 'Infinite\nFishing', 72).setOrigin(0.5);
 
         this.add.bitmapText(width / 2, height * 0.4, 'blue_winter_font', 'Use A and D to move\nyour hook left and right\nand get the deepest catch!', 32).setOrigin(0.5).setCenterAlign();
 
-        this.add.bitmapText(width / 2, height * 0.6, 'bubble_font', 'Press SPACE to start', 32).setOrigin(0.5);
+        this.add.bitmapText(width / 2, height * 0.55, 'bubble_font', 'Press SPACE to start', 42).setOrigin(0.5);
+
+
+        this.add.bitmapText(width / 2, height * 0.65, 'bubble_font', 'Press C for credits', 26).setOrigin(0.5);
+
+
 
     }
 

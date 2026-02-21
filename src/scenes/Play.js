@@ -33,7 +33,7 @@ class Play extends Phaser.Scene {
 
         // Score
         this.score = 0;
-        this.score_text = this.add.text(0, 0, "0", {
+        this.score_text = this.add.text(0, 0, "0m", {
             fontSize: '48px', 
             color: '#000000a',
             padding: { left: 10}}).setDepth(1000).setOrigin(0);
@@ -52,7 +52,7 @@ class Play extends Phaser.Scene {
 
 
         // Add hook sprite
-        this.hook = this.physics.add.sprite(width / 2, BALL_START_Y, 'hook');
+        this.hook = this.physics.add.sprite(width / 2, HOOK_START_Y, 'hook');
         this.hook.setCircle(this.hook.width / 2, 0, 25);
         this.hook.setGravityY(200);
         this.hook.body.setBounce(BOUNCE_FACTOR);
@@ -92,6 +92,11 @@ class Play extends Phaser.Scene {
         });
         this.physics.add.collider(this.hook, this.fish, () => {
             this.background_music.stop();
+
+            // Update high score if needed
+            if (this.score > high_score) {
+                high_score = this.score;
+            }
             this.scene.start('Menu');
         });
         
@@ -106,8 +111,8 @@ class Play extends Phaser.Scene {
         this.water_pipeline.set1f('scrollY', this.cameras.main.scrollY);
 
         // Update text
-        this.score = (this.hook.y - BALL_START_Y) / 100;
-        this.score_text.setText(Math.floor(this.score));
+        this.score = (this.hook.y - HOOK_START_Y) / 100;
+        this.score_text.setText(`${Math.floor(this.score)}m`);
 
 
         // Check if speed needs to be increased

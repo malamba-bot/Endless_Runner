@@ -11,20 +11,22 @@ let config = {
     scale: {
         autoCenter: Phaser.Scale.CENTER_HORIZONTALLY,
     },
-    scene: [Menu, Play],
+    scene: [Menu, Play, Credits],
 }
 
 let game = new Phaser.Game(config);
 
 let { height, width } = game.config;
 
-let left, right, space;
+let left, right, space, c_key;
 let max_velocity = 250;
+
+let high_score = 0;
 
 const VELOCITY_MULTIPLIER = 1.25;
 const BOUNCE_FACTOR = 0.8;
 const MOVE_SPEED = 500;
-const BALL_START_Y = 100;
+const HOOK_START_Y = 100;
 const HARD_MAX_VELOCITY = 640;
 
 // How fast burst movement decays
