@@ -4,7 +4,7 @@ class Fish extends Phaser.Physics.Arcade.Sprite {
         this.scene = scene;
         scene.add.existing(this);
         scene.physics.add.existing(this);
-        scene.spikeys.add(this);
+        scene.fish.add(this);
         this.body.setSize(OBSTACLE_SIZE, OBSTACLE_SIZE * 0.6);
         this.setImmovable(true);
         this.body.pushable = false;

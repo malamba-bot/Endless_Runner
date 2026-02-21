@@ -8,10 +8,17 @@ class Play extends Phaser.Scene {
     }
 
     create() {
+        // Start music
+        this.background_music = this.sound.add('ocean_music', {volume: 0.5, loop: true});
+        this.background_music.play();
         // PIPELINE -----------------------------------------------
         // Add the water warping pipeline to the pipeline manager
+        
         const pipelineManager = this.sys.renderer.pipelines;
+        if (!pipelineManager.has('water_prefx')) {
         this.water_pipeline = pipelineManager.add('water_prefx', new Water_Pipeline(game, this));
+        } else
+            this.water_pipeline = pipelineManager.get('water_prefx');
         this.water = this.add.image(0, 0, 'water').setOrigin(0).setDisplaySize(width, height).setPipeline('water_prefx');
         this.water.setScrollFactor(0);
         this.water_pipeline.set1f('y_resolution', height);
@@ -41,7 +48,7 @@ class Play extends Phaser.Scene {
         // Add physics groups for obstacles
         this.platforms = this.physics.add.group({ immovable: true });
         this.bubbles = this.physics.add.group({ immovable: true });
-        this.spikeys = this.physics.add.group();
+        this.fish = this.physics.add.group();
 
 
         // Add hook sprite
@@ -83,8 +90,9 @@ class Play extends Phaser.Scene {
             temp_bubble.play('pop');
             temp_bubble.once('animationcomplete', () => { temp_bubble.destroy(); });
         });
-        this.physics.add.collider(this.hook, this.spikeys, () => {
-            console.log("Game over!");
+        this.physics.add.collider(this.hook, this.fish, () => {
+            this.background_music.stop();
+            this.scene.start('Menu');
         });
         
         // Add keys to the input manager
@@ -197,6 +205,12 @@ class Play extends Phaser.Scene {
 
         return chunk;
     }
+
+    end_game() {
+
+
+    }
 }
+
 
 

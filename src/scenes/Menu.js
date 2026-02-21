@@ -8,6 +8,7 @@ class Menu extends Phaser.Scene {
         this.load.audio('pop_sfx_1', './assets/sfx/pop_sfx_1.mp3')
         this.load.audio('pop_sfx_2', './assets/sfx/pop_sfx_2.mp3')
         this.load.audio('water_woosh_sfx', './assets/sfx/water_woosh_sfx.mp3')
+        this.load.audio('ocean_music', './assets/sfx/ocean_music.mp3')
 
         // IMAGES
         this.load.image('hook', './assets/hook1.png');
@@ -32,9 +33,11 @@ class Menu extends Phaser.Scene {
 
         // BITMAP FONTS -----------------------------------------
         this.load.bitmapFont('bubble_font', './assets/fonts/bubble_font.png', './assets/fonts/bubble_font.xml')
+        this.load.bitmapFont('blue_winter_font', './assets/fonts/blue_winter.png', './assets/fonts/blue_winter.xml')
     }
 
     create() {
+
         // ANIMATIONS -------------------------------------------
         this.anims.create({
             key: "pop",
@@ -53,14 +56,23 @@ class Menu extends Phaser.Scene {
 
 
         // BACKGROUND
+        
         const pipelineManager = this.sys.renderer.pipelines;
+        if (!pipelineManager.has('water_prefx_menu')) {
         this.water_pipeline = pipelineManager.add('water_prefx_menu', new Water_Pipeline(game, this));
+        } else
+            this.water_pipeline = pipelineManager.get('water_prefx_menu');
         this.water = this.add.image(0, 0, 'water').setOrigin(0).setDisplaySize(width, height).setPipeline('water_prefx_menu');
         this.water_pipeline.set1f('y_resolution', height);
         this.water_pipeline.set1f('scrollY', 0);
 
         // TEXT ---------------------------------------------------
-        this.add.bitmapText(width / 2, height / 3, 'bubble_font', 'Infinite\nFishing', 72).setOrigin(0.5);
+        this.add.bitmapText(width / 2, height * 0.2, 'bubble_font', 'Infinite\nFishing', 72).setOrigin(0.5);
+
+        this.add.bitmapText(width / 2, height * 0.4, 'blue_winter_font', 'Use A and D to move\nyour hook left and right\nand get the deepest catch!', 32).setOrigin(0.5).setCenterAlign();
+
+        this.add.bitmapText(width / 2, height * 0.6, 'bubble_font', 'Press SPACE to start', 32).setOrigin(0.5);
+
     }
 
     update() {
