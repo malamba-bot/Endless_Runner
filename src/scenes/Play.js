@@ -8,6 +8,7 @@ class Play extends Phaser.Scene {
     }
 
     create() {
+        max_velocity = 250;
         // Start music
         this.background_music = this.sound.add('ocean_music', {volume: 0.5, loop: true});
         this.background_music.play();

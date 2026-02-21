@@ -40,17 +40,20 @@ class Menu extends Phaser.Scene {
     create() {
 
         // ANIMATIONS -------------------------------------------
-        this.anims.create({
-            key: "pop",
-            frames: this.anims.generateFrameNumbers("bubble_pop", { start: 1, end: 3, first: 1 }),
-            frameRate: 12,
-        })
-
-        this.anims.create({
-            key: "blink",
-            frames: this.anims.generateFrameNumbers("fish_blink", { start: 0, end: 3, first: 0 }),
-            frameRate: 8,
-        })
+        if (!this.anims.get('pop')) {
+            this.anims.create({
+                key: "pop",
+                frames: this.anims.generateFrameNumbers("bubble_pop", { start: 1, end: 3, first: 1 }),
+                frameRate: 12,
+            })
+        }
+        if (!this.anims.get('blink')) {
+            this.anims.create({
+                key: "blink",
+                frames: this.anims.generateFrameNumbers("fish_blink", { start: 0, end: 3, first: 0 }),
+                frameRate: 8,
+            })
+        }
 
         // INPUT --------------------------------------------------
         space = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);

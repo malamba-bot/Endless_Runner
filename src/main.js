@@ -37,7 +37,7 @@ let game = new Phaser.Game(config);
 let { height, width } = game.config;
 
 let left, right, space, c_key;
-let max_velocity = 250;
+let max_velocity;
 
 let high_score = 0;
 
