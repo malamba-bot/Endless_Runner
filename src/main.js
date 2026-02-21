@@ -12,6 +12,9 @@
     * generation of obstacles which uses chunking, and the custom shader I
     * wrote. I provided explanations of both with lots of comments in their
     * respective sections.
+    *
+    * Additionally, the infinite scrolling is done inside of the shader (see
+    * more in the shader class)
     */
 let config = {
     type: Phaser.WEBGL,

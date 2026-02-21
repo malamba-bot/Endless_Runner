@@ -33,10 +33,7 @@ class Play extends Phaser.Scene {
 
         // Score
         this.score = 0;
-        this.score_text = this.add.text(0, 0, "0m", {
-            fontSize: '48px', 
-            color: '#000000a',
-            padding: { left: 10}}).setDepth(1000).setOrigin(0);
+        this.score_text = this.add.bitmapText(width / 2, 0, 'bubble_font', '0m', 42).setOrigin(0.5, 0);
         // Stick the score text to the camera
         this.score_text.setScrollFactor(0);
 
