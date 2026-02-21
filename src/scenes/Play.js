@@ -11,11 +11,18 @@ class Play extends Phaser.Scene {
         // IMAGES
         this.load.image('hook', './assets/hook1.png');
         this.load.image('water', './assets/water.png');
-        this.load.image('spikey_ball', './assets/spikey_ball.png');
+        this.load.image('fish', './assets/fish.png');
         this.load.image('bubble', './assets/bubble.png');
         
         // SPRITE SHEETS
         this.load.spritesheet("bubble_pop", "./assets/bubble_pop_scaled.png", {
+            frameWidth: 48,
+            frameHeight: 48,
+            startFrame: 0,
+            endFrame: 3,
+        })
+
+        this.load.spritesheet("fish_blink", "./assets/fish.png", {
             frameWidth: 48,
             frameHeight: 48,
             startFrame: 0,
@@ -45,6 +52,12 @@ class Play extends Phaser.Scene {
             key: "pop",
             frames: this.anims.generateFrameNumbers("bubble_pop", { start: 1, end: 3, first: 1 }),
             frameRate: 12,
+        })
+
+        this.anims.create({
+            key: "blink",
+            frames: this.anims.generateFrameNumbers("fish_blink", { start: 0, end: 3, first: 0 }),
+            frameRate: 8,
         })
 
         // Add popping sounds to an array so we can randomly select one later
@@ -210,7 +223,7 @@ class Play extends Phaser.Scene {
                 chunk[i] = new Bubble(this, cur_col, cur_row).setOrigin(0);
             } else {
                 // Make spikey balls
-                chunk[i] = new Spikey_Ball(this, cur_col, cur_row).setOrigin(0);
+                chunk[i] = new Fish(this, cur_col, cur_row).setOrigin(0);
             }
         }
         // Set the next spawn threshold to the bottom of the screen
