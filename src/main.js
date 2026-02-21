@@ -11,8 +11,7 @@ let config = {
     scale: {
         autoCenter: Phaser.Scale.CENTER_HORIZONTALLY,
     },
-    scene: [Play],
-    //pipeline: { 'water_prefx': Water_Pipeline },
+    scene: [Menu, Play],
 }
 
 let game = new Phaser.Game(config);
