@@ -1,3 +1,18 @@
+/*    Name: Max Kinet
+    * Title: Infinite Fishing
+    * Approximate time spent: 45 hours
+    * Sources: No source code was directly copied from anywhere other than
+    * Phaser docs
+    * Creative tilt justification: I tried to give the game a hand-painted
+    * look by hand-drawing all the assets and I simulated an underwater enviornment by writing a custom
+    * fragment shader(pain) that warps the background image, making it look like
+    * waves are passing.
+    *
+    * Notes: On the technical side, I was pretty happy with my procedural
+    * generation of obstacles which uses chunking, and the custom shader I
+    * wrote. I provided explanations of both with lots of comments in their
+    * respective sections.
+    */
 let config = {
     type: Phaser.WEBGL,
     width: 480,
@@ -5,7 +20,7 @@ let config = {
     physics: { 
         default: 'arcade',
         arcade: {
-            debug: true,
+            debug: false,
         }
     },
     scale: {

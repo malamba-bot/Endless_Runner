@@ -9,6 +9,7 @@ class Menu extends Phaser.Scene {
         this.load.audio('pop_sfx_2', './assets/sfx/pop_sfx_2.mp3')
         this.load.audio('water_woosh_sfx', './assets/sfx/water_woosh_sfx.mp3')
         this.load.audio('ocean_music', './assets/sfx/ocean_music.mp3')
+        this.load.audio('ow_sfx', './assets/sfx/ow_sfx.mp3')
 
         // IMAGES
         this.load.image('hook', './assets/hook1.png');
@@ -85,11 +86,14 @@ class Menu extends Phaser.Scene {
 
     update() {
         if (Phaser.Input.Keyboard.JustDown(space)) {
-
             this.sound.play('water_woosh_sfx');
             this.time.delayedCall(500, () => {
                 this.scene.start('Play');
             });
+        }
+
+        if (Phaser.Input.Keyboard.JustDown(c_key)) {
+                this.scene.start('Credits');
         }
 
     }

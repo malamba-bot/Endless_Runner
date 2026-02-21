@@ -90,8 +90,10 @@ class Play extends Phaser.Scene {
             temp_bubble.play('pop');
             temp_bubble.once('animationcomplete', () => { temp_bubble.destroy(); });
         });
-        this.physics.add.collider(this.hook, this.fish, () => {
+        this.physics.add.collider(this.hook, this.fish, (hook, fish) => {
             this.background_music.stop();
+            this.sound.play('ow_sfx');
+            fish.destroy();
 
             // Update high score if needed
             if (this.score > high_score) {
