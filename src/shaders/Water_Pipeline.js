@@ -35,6 +35,5 @@ class Water_Pipeline extends Phaser.Renderer.WebGL.Pipelines.PreFXPipeline {
         super.onPreRender();
         // Get new time and scrollY from the scene
         this.set1f('time', this.scene.time.now / 1000);
-        this.set1f('scrollY', this.scene.cameras.main.scrollY);
     }
 }

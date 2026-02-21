@@ -16,11 +16,6 @@ class Play extends Phaser.Scene {
         this.water.setScrollFactor(0);
         this.water_pipeline.set1f('y_resolution', height);
 
-        // INPUT --------------------------------------------------
-
-        // Add left and right controls to the input manager
-        left = this.input.keyboard.addKey('A');
-        right = this.input.keyboard.addKey('D');
 
         // SOUND ---------------------------------------------------
 
@@ -91,10 +86,17 @@ class Play extends Phaser.Scene {
         this.physics.add.collider(this.hook, this.spikeys, () => {
             console.log("Game over!");
         });
+        
+        // Add keys to the input manager
+        left = this.input.keyboard.addKey('A');
+        right = this.input.keyboard.addKey('D');
 
     }
 
     update(time, delta) {
+        // Update shader scroll
+        this.water_pipeline.set1f('scrollY', this.cameras.main.scrollY);
+
         // Update text
         this.score = (this.hook.y - BALL_START_Y) / 100;
         this.score_text.setText(Math.floor(this.score));
